@@ -21,15 +21,21 @@ class WrikeApp(APIApplication):
 
     def get_contacts(self, deleted=None, fields=None, metadata=None) -> Any:
         """
-        Retrieves a list of contacts from the server, with optional filtering and field selection.
-
+        Retrieves contacts from the server with optional deleted status filtering, field selection, and metadata inclusion.
+        
         Args:
-            deleted: Optional[bool]. If set, filters contacts by their deleted status. Only contacts matching the specified deleted state are returned.
-            fields: Optional[str]. Comma-separated list of fields to include in the response for each contact. Limits the contact fields returned.
-            metadata: Optional[str]. Comma-separated list of metadata fields to include in the response. Filters which metadata is returned for each contact.
-
+            deleted: Optional[bool]. Filters contacts by deletion status. When None, returns contacts regardless of deletion status.
+            fields: Optional[str]. Comma-separated fields to include in each contact's response. Limits returned contact fields.
+            metadata: Optional[str]. Comma-separated metadata fields to include in each contact's response.
+        
         Returns:
-            The JSON-decoded response from the server containing contact information, as a Python object (such as a list or dictionary) depending on the backend API response structure.
+            JSON-decoded response from server containing contact data, typically as a list or dictionary based on API structure.
+        
+        Raises:
+            HTTPError: Raised when the server returns a non-success status code, typically due to invalid parameters or server errors.
+        
+        Tags:
+            retrieve, contacts, filter, api, important
         """
         url = f"{self.base_url}/contacts"
         query_params = {
@@ -48,13 +54,19 @@ class WrikeApp(APIApplication):
     def get_contacts_by_contactid(self, contactId, fields=None) -> Any:
         """
         Retrieves contact information for a specific contact ID, optionally returning only specified fields.
-
+        
         Args:
             contactId: The unique identifier of the contact to retrieve. Must not be None.
             fields: Optional; a comma-separated string specifying which fields to include in the response. If None, all fields are returned.
-
+        
         Returns:
             A JSON-decoded object containing the contact's details as returned by the API.
+        
+        Raises:
+            ValueError: Raised when the 'contactId' parameter is missing.
+        
+        Tags:
+            retrieve, contact-management, important
         """
         if contactId is None:
             raise ValueError("Missing required parameter 'contactId'")
@@ -75,19 +87,26 @@ class WrikeApp(APIApplication):
         fields=None,
     ) -> Any:
         """
-        Updates an existing contact by contact ID with provided details such as metadata, billing and cost rates, job role, custom fields, or additional fields.
-
+        Updates an existing contact using the specified contact ID with provided details including metadata, billing/cost rates, job role, and custom fields.
+        
         Args:
-            contactId: The unique identifier of the contact to update. Must not be None.
-            metadata: Optional metadata dictionary for the contact (default is None).
-            currentBillRate: Optional current bill rate for the contact (default is None).
-            currentCostRate: Optional current cost rate for the contact (default is None).
-            jobRoleId: Optional job role identifier associated with the contact (default is None).
-            customFields: Optional dictionary of custom contact fields (default is None).
-            fields: Optional list of specific fields to include in the response (default is None).
-
+            contactId: The unique identifier of the contact to update (required).
+            metadata: Optional dictionary containing metadata for the contact.
+            currentBillRate: Optional current billing rate associated with the contact.
+            currentCostRate: Optional current cost rate associated with the contact.
+            jobRoleId: Optional identifier for the contact's job role.
+            customFields: Optional dictionary of custom field values for the contact.
+            fields: Optional list of field names to include in the response.
+        
         Returns:
-            The JSON-decoded response containing the updated contact details.
+            JSON-decoded response containing updated contact details from the API.
+        
+        Raises:
+            ValueError: When contactId parameter is not provided.
+            requests.HTTPError: When the API request fails due to client (4xx) or server (5xx) errors.
+        
+        Tags:
+            update, contact, async-job, management, important
         """
         if contactId is None:
             raise ValueError("Missing required parameter 'contactId'")
@@ -108,13 +127,20 @@ class WrikeApp(APIApplication):
 
     def get_users_by_userid(self, userId) -> Any:
         """
-        Retrieves user information for a given user ID from the API endpoint.
-
+        Retrieves user information by ID from the API endpoint.
+        
         Args:
-            userId: The unique identifier of the user whose information is to be retrieved.
-
+            userId: The unique identifier of the user to retrieve (required).
+        
         Returns:
-            A JSON-decoded object containing user details as returned by the API.
+            JSON-decoded dictionary containing user details from the API response.
+        
+        Raises:
+            ValueError: Raised when userId is None or missing.
+            HTTPError: Raised when the API request fails (non-2xx status code).
+        
+        Tags:
+            retrieve, user-info, api, management, important
         """
         if userId is None:
             raise ValueError("Missing required parameter 'userId'")
@@ -127,13 +153,20 @@ class WrikeApp(APIApplication):
     def put_users_by_userid(self, userId, profile=None) -> Any:
         """
         Updates a user's profile information by user ID using a PUT request.
-
+        
         Args:
-            userId: str. The unique identifier of the user. Must not be None.
-            profile: dict or None. Optional. The profile information to update for the user. If None, no profile data is sent.
-
+            userId: The unique identifier of the user. Must not be None.
+            profile: Optional. The profile information to update for the user. If None, no profile data is sent.
+        
         Returns:
-            Any. The parsed JSON response from the server after updating the user's information.
+            The parsed JSON response from the server after updating the user's information.
+        
+        Raises:
+            ValueError: Raised when the 'userId' parameter is missing.
+            HTTPError: Raised if the HTTP request to the server fails.
+        
+        Tags:
+            update, user-management, important
         """
         if userId is None:
             raise ValueError("Missing required parameter 'userId'")
@@ -152,15 +185,21 @@ class WrikeApp(APIApplication):
     ) -> Any:
         """
         Retrieves a list of groups from the API, applying optional filtering and pagination parameters.
-
+        
         Args:
-            metadata: Optional. Specifies additional metadata to include or filter by in the group results.
-            pageSize: Optional. The maximum number of groups to return in the response.
-            pageToken: Optional. A token identifying the page of results to return, for pagination.
-            fields: Optional. Selector specifying a subset of fields to include in the response.
-
+            metadata: Optional metadata to include or filter by in the group results.
+            pageSize: The maximum number of groups to return in the response.
+            pageToken: A token identifying the page of results to return, for pagination.
+            fields: Selector specifying a subset of fields to include in the response.
+        
         Returns:
-            The API response parsed as a JSON-compatible object, typically a dictionary containing group information.
+            A JSON-compatible object, typically a dictionary containing group information.
+        
+        Raises:
+            requests.HTTPError: Raised if the HTTP request returns an unsuccessful status code.
+        
+        Tags:
+            list, management, important
         """
         url = f"{self.base_url}/groups"
         query_params = {
@@ -181,17 +220,23 @@ class WrikeApp(APIApplication):
         self, title, members=None, parent=None, avatar=None, metadata=None
     ) -> Any:
         """
-        Creates a new group with the specified title and optional details, sending a POST request to the groups endpoint.
-
+        Creates a new group with the specified title and optional details via a POST request to the groups endpoint.
+        
         Args:
-            title: str. The name of the group to create. This parameter is required.
-            members: Optional[list]. List of member identifiers to include in the group.
-            parent: Optional[str]. Identifier of the parent group, if applicable.
-            avatar: Optional[Any]. Avatar image or data to associate with the group.
-            metadata: Optional[dict]. Additional metadata or custom fields for the group.
-
+            title: The name of the group to create. This parameter is required.
+            members: Optional list of member identifiers to include in the group.
+            parent: Optional identifier of the parent group.
+            avatar: Optional avatar image or data to associate with the group.
+            metadata: Optional dictionary of additional metadata or custom fields for the group.
+        
         Returns:
-            Any. A dictionary containing the response data representing the created group.
+            A dictionary containing the response data representing the created group.
+        
+        Raises:
+            ValueError: Raised when the required 'title' parameter is missing.
+        
+        Tags:
+            create, group-management, important
         """
         if title is None:
             raise ValueError("Missing required parameter 'title'")
@@ -212,13 +257,19 @@ class WrikeApp(APIApplication):
     def get_groups_by_groupid(self, groupId, fields=None) -> Any:
         """
         Retrieves details for a specific group by its group ID, optionally returning only specified fields.
-
+        
         Args:
-            groupId: str. The unique identifier of the group to retrieve. Must not be None.
-            fields: Optional[str]. A comma-separated list of fields to include in the response. If None, all fields are returned.
-
+            groupId: The unique identifier of the group to retrieve.
+            fields: Optional; a comma-separated list of fields to include in the response.
+        
         Returns:
-            dict. A dictionary containing the group details as returned by the API.
+            A dictionary containing the group details as returned by the API.
+        
+        Raises:
+            ValueError: Raised if the groupId parameter is missing.
+        
+        Tags:
+            retrieve, group-management, data-fetch, important
         """
         if groupId is None:
             raise ValueError("Missing required parameter 'groupId'")
@@ -241,21 +292,27 @@ class WrikeApp(APIApplication):
         metadata=None,
     ) -> Any:
         """
-        Updates an existing group identified by groupId with new properties and membership changes via a PUT request.
-
+        Updates an existing group by groupId with new properties and membership changes via a PUT request.
+        
         Args:
-            groupId: str. The unique identifier of the group to update. Required.
-            title: str, optional. The new title for the group.
-            addMembers: list or None, optional. List of member identifiers to add to the group.
-            removeMembers: list or None, optional. List of member identifiers to remove from the group.
-            addInvitations: list or None, optional. List of invitations to add to the group.
-            removeInvitations: list or None, optional. List of invitations to remove from the group.
-            parent: str or None, optional. The new parent group identifier, if setting or changing the hierarchy.
-            avatar: str or None, optional. New avatar for the group, typically a URL or encoded image data.
-            metadata: dict or None, optional. Additional metadata to attach to the group.
-
+            groupId: The unique identifier of the group to update. Required.
+            title: Optional new title for the group.
+            addMembers: Optional list of member identifiers to add to the group.
+            removeMembers: Optional list of member identifiers to remove from the group.
+            addInvitations: Optional list of invitations to add to the group.
+            removeInvitations: Optional list of invitations to remove from the group.
+            parent: Optional new parent group identifier for hierarchy changes.
+            avatar: Optional new avatar for the group, typically a URL or encoded image data.
+            metadata: Optional additional metadata to attach to the group.
+        
         Returns:
-            dict. The JSON response from the server containing the updated group details.
+            A dict containing the updated group details from the server response.
+        
+        Raises:
+            ValueError: Raised if the required 'groupId' parameter is missing.
+        
+        Tags:
+            update, group-management, membership, important
         """
         if groupId is None:
             raise ValueError("Missing required parameter 'groupId'")
@@ -279,12 +336,18 @@ class WrikeApp(APIApplication):
     def delete_groups_by_groupid(self, groupId) -> Any:
         """
         Deletes a group resource identified by the provided groupId using an HTTP DELETE request.
-
+        
         Args:
-            groupId: str. The unique identifier of the group to be deleted. Must not be None.
-
+            groupId: The unique identifier of the group to be deleted.
+        
         Returns:
-            Any. The JSON-decoded response from the API after deleting the group.
+            The JSON-decoded response from the API after deleting the group.
+        
+        Raises:
+            ValueError: Raised if the groupId is None.
+        
+        Tags:
+            delete, group-management, api-call, important
         """
         if groupId is None:
             raise ValueError("Missing required parameter 'groupId'")
@@ -296,13 +359,19 @@ class WrikeApp(APIApplication):
 
     def put_groups_bulk(self, members) -> Any:
         """
-        Updates multiple group memberships in bulk by sending a PUT request with the given members data.
-
+        Updates multiple group memberships in bulk by sending a PUT request with the given member data.
+        
         Args:
             members: List or collection of member data to be processed in bulk. Must not be None.
-
+        
         Returns:
             Parsed JSON response from the API containing the result of the bulk update operation.
+        
+        Raises:
+            ValueError: Raised when the required 'members' parameter is missing or None.
+        
+        Tags:
+            bulk, update, management, important
         """
         if members is None:
             raise ValueError("Missing required parameter 'members'")
@@ -321,12 +390,18 @@ class WrikeApp(APIApplication):
     ) -> Any:
         """
         Retrieves all invitations from the server using a GET request.
-
+        
         Args:
-            None: This function takes no arguments
-
+            None: This function takes no arguments.
+        
         Returns:
-            The JSON-decoded response containing invitation data from the server.
+            Any: JSON-decoded response containing invitation data.
+        
+        Raises:
+            requests.HTTPError: Raised if the HTTP request fails (non-2xx status code).
+        
+        Tags:
+            retrieve, list, invitations, async_job, important
         """
         url = f"{self.base_url}/invitations"
         query_params = {}
@@ -347,19 +422,25 @@ class WrikeApp(APIApplication):
     ) -> Any:
         """
         Sends an invitation email to a user with optional details such as name, role, and custom message.
-
+        
         Args:
-            email: str. The email address of the user to invite. Required.
-            firstName: str, optional. The first name of the invitee.
-            lastName: str, optional. The last name of the invitee.
-            role: str, optional. The role to assign to the invited user.
-            external: bool, optional. Indicates if the invitation is for an external user.
-            subject: str, optional. Custom subject line for the invitation email.
-            message: str, optional. Custom message to include in the invitation.
-            userTypeId: Any, optional. The user type identifier to associate with the invitation.
-
+            email: The email address of the user to invite. Required.
+            firstName: The first name of the invitee. Optional.
+            lastName: The last name of the invitee. Optional.
+            role: The role to assign to the invited user. Optional.
+            external: Indicates if the invitation is for an external user. Optional.
+            subject: Custom subject line for the invitation email. Optional.
+            message: Custom message to include in the invitation. Optional.
+            userTypeId: The user type identifier to associate with the invitation. Optional.
+        
         Returns:
-            Any. The server's parsed JSON response to the invitation request.
+            The server's parsed JSON response to the invitation request.
+        
+        Raises:
+            ValueError: Raised if the required 'email' parameter is missing.
+        
+        Tags:
+            invite, email, invitation, user-management, important
         """
         if email is None:
             raise ValueError("Missing required parameter 'email'")
@@ -384,17 +465,24 @@ class WrikeApp(APIApplication):
         self, invitationId, resend=None, role=None, external=None, userTypeId=None
     ) -> Any:
         """
-        Updates an existing invitation by invitation ID with optional fields such as resend, role, external, and user type ID.
-
+        Updates an existing invitation by its unique ID with optional parameters, handling conditional updates and API communication.
+        
         Args:
-            invitationId: The unique identifier of the invitation to update. Required.
-            resend: Optional; whether to resend the invitation (boolean or compatible type).
-            role: Optional; the role to assign with the invitation (string or compatible type).
-            external: Optional; indicates if the invitation is for an external recipient (boolean or compatible type).
-            userTypeId: Optional; the user type identifier to associate with the invitation (string, int, or compatible type).
-
+            invitationId: The unique identifier of the invitation to update (required).
+            resend: Optional boolean indicating whether to resend the invitation.
+            role: Optional role assignment for the invitation recipient.
+            external: Optional flag marking the invitation as external/internal.
+            userTypeId: Optional identifier specifying the user type for the invitation.
+        
         Returns:
-            A dictionary representing the updated invitation resource as returned by the API.
+            Dictionary containing the updated invitation resource from the API.
+        
+        Raises:
+            ValueError: When 'invitationId' is not provided.
+            HTTPError: When the API request fails (raised via response.raise_for_status()).
+        
+        Tags:
+            update, invitation, api, async-job, management, important
         """
         if invitationId is None:
             raise ValueError("Missing required parameter 'invitationId'")
@@ -413,13 +501,20 @@ class WrikeApp(APIApplication):
 
     def delete_invitations_by_invitationid(self, invitationId) -> Any:
         """
-        Deletes an invitation specified by its invitation ID.
-
+        Deletes a specific invitation using its unique identifier
+        
         Args:
-            invitationId: The unique identifier of the invitation to delete.
-
+            invitationId: The unique identifier of the invitation to delete (required)
+        
         Returns:
-            A JSON-decoded response from the API after deleting the invitation.
+            JSON-decoded response containing the API result after deletion
+        
+        Raises:
+            ValueError: Raised when invitationId is not provided
+            requests.exceptions.HTTPError: Raised for HTTP request failures (e.g., invalid invitation ID or network issues)
+        
+        Tags:
+            delete, invitation, api, management, important
         """
         if invitationId is None:
             raise ValueError("Missing required parameter 'invitationId'")
@@ -432,12 +527,18 @@ class WrikeApp(APIApplication):
     def get_a_ccount(self, fields=None) -> Any:
         """
         Retrieves account information from the API, optionally including only specified fields.
-
+        
         Args:
-            fields: Optional[str]. A comma-separated string of field names to include in the response. If None, all default fields are returned.
-
+            fields: Optional string. A comma-separated string of field names to include in the response. If None, all default fields are returned.
+        
         Returns:
-            Any. The JSON-decoded response from the API containing account details.
+            The JSON-decoded response from the API containing account details.
+        
+        Raises:
+            requests.exceptions.HTTPError: Raised when the HTTP request returns an unsuccessful status code.
+        
+        Tags:
+            retrieve, account, api, important
         """
         url = f"{self.base_url}/account"
         query_params = {k: v for k, v in [("fields", fields)] if v is not None}
@@ -448,12 +549,18 @@ class WrikeApp(APIApplication):
     def put_a_ccount(self, metadata=None) -> Any:
         """
         Sends a PUT request to update or create an account with the provided metadata and returns the server response as a JSON object.
-
+        
         Args:
-            metadata: Optional metadata to associate with the account. If provided, this will be included in the request body. The format should match the server's expected schema. Defaults to None.
-
+            metadata: Optional metadata to associate with the account. If provided, included in the request body. Must match the server's expected schema. Defaults to None.
+        
         Returns:
-            A JSON-decoded Python object representing the response from the account API endpoint.
+            JSON-decoded Python object representing the server's response from the account API endpoint.
+        
+        Raises:
+            HTTPError: Raised if the HTTP request fails (e.g., due to invalid metadata format, network issues, or server errors).
+        
+        Tags:
+            put, account, metadata, async_job, important
         """
         request_body = {
             "metadata": metadata,
@@ -470,12 +577,18 @@ class WrikeApp(APIApplication):
     ) -> Any:
         """
         Retrieves all workflows from the server using a GET request.
-
+        
         Args:
             None: This function takes no arguments
-
+        
         Returns:
             The parsed JSON response containing the list of workflows.
+        
+        Raises:
+            requests.RequestException: Raised if there's a problem with the HTTP request to the server.
+        
+        Tags:
+            list, fetch, workflows, management, important
         """
         url = f"{self.base_url}/workflows"
         query_params = {}
@@ -485,14 +598,20 @@ class WrikeApp(APIApplication):
 
     def post_workflows(self, name=None, request_body=None) -> Any:
         """
-        Creates a new workflow by sending a POST request to the workflows endpoint.
-
+        Creates a new workflow by sending a POST request to the workflows endpoint with optional name and request body.
+        
         Args:
-            name: Optional; the name of the workflow to create. Included as a query parameter if provided.
-            request_body: Optional; the request body containing workflow details, provided as the data payload for the POST request.
-
+            name: Optional; name of the workflow to create, included as a query parameter if provided.
+            request_body: Optional; request body containing workflow details, provided as the data payload for the POST request.
+        
         Returns:
-            The JSON-decoded response from the server containing details of the created workflow.
+            JSON-decoded response from the server containing details of the created workflow.
+        
+        Raises:
+            HTTPError: Raised when the server returns a 4XX/5XX status code, indicating a failed request.
+        
+        Tags:
+            post, create, workflow, async_job, management, important
         """
         url = f"{self.base_url}/workflows"
         query_params = {k: v for k, v in [("name", name)] if v is not None}
@@ -505,15 +624,21 @@ class WrikeApp(APIApplication):
     ) -> Any:
         """
         Updates an existing workflow by workflow ID with optional name, hidden status, and request body data.
-
+        
         Args:
             workflowId: The unique identifier of the workflow to update. Required.
             name: An optional new name for the workflow. If provided, updates the workflow's name.
             hidden: An optional boolean indicating whether the workflow should be hidden.
             request_body: Optional data to include in the request body when updating the workflow.
-
+        
         Returns:
             The updated workflow as a JSON-decoded Python object.
+        
+        Raises:
+            ValueError: Raised when the 'workflowId' parameter is missing.
+        
+        Tags:
+            update, workflow, management, important
         """
         if workflowId is None:
             raise ValueError("Missing required parameter 'workflowId'")
@@ -530,12 +655,18 @@ class WrikeApp(APIApplication):
     ) -> Any:
         """
         Retrieves all custom fields from the API and returns them as a parsed JSON object.
-
+        
         Args:
-            None: This function takes no arguments
-
+            None: This function takes no arguments.
+        
         Returns:
             The JSON-decoded response content containing the list of custom fields, typically as a Python dict or list, depending on the API response structure.
+        
+        Raises:
+            requests.exceptions.HTTPError: Raised if the HTTP request returned an unsuccessful status code.
+        
+        Tags:
+            fetch, api_call, data_retrieval, important
         """
         url = f"{self.base_url}/customfields"
         query_params = {}
@@ -554,19 +685,25 @@ class WrikeApp(APIApplication):
         request_body=None,
     ) -> Any:
         """
-        Creates a custom field by sending a POST request with the specified parameters to the customfields endpoint and returns the created field's data.
-
+        Creates a custom field by sending a POST request to the customfields endpoint with the specified parameters.
+        
         Args:
-            title: str. The name of the custom field to be created. Required.
-            type: str. The type of the custom field to be created. Required.
-            spaceId: Optional[str]. Identifier of the space to associate with the custom field.
-            sharing: Optional[str]. Determines the sharing settings for the custom field.
-            shareds: Optional[str]. Specifies users or groups the custom field is shared with.
-            settings: Optional[str]. Additional settings for the custom field in string or JSON format.
-            request_body: Optional[Any]. The request body payload to include in the POST request.
-
+            title: The name of the custom field to be created.
+            type: The type of the custom field to be created.
+            spaceId: Optional identifier of the space to associate with the custom field.
+            sharing: Optional sharing settings for the custom field.
+            shareds: Optional users or groups the custom field is shared with.
+            settings: Optional additional settings for the custom field in string or JSON format.
+            request_body: Optional request body payload to include in the POST request.
+        
         Returns:
-            Any. The JSON response data representing the created custom field.
+            The JSON response data representing the created custom field.
+        
+        Raises:
+            ValueError: Raised when either 'title' or 'type' is missing.
+        
+        Tags:
+            create, custom-field, management, api-request, important
         """
         if title is None:
             raise ValueError("Missing required parameter 'title'")
@@ -591,13 +728,19 @@ class WrikeApp(APIApplication):
 
     def get_customfields_by_customfieldid(self, customFieldId) -> Any:
         """
-        Retrieves details for a custom field by its unique identifier from the API.
-
+        Retrieves details for a custom field by its unique identifier from the API
+        
         Args:
-            customFieldId: The unique identifier of the custom field to retrieve.
-
+            customFieldId: The unique identifier of the custom field to retrieve
+        
         Returns:
-            A JSON-decoded response containing the custom field details.
+            A JSON-decoded response containing the custom field details
+        
+        Raises:
+            ValueError: Raised when the 'customFieldId' parameter is missing or None
+        
+        Tags:
+            retrieve, api, custom-field, important
         """
         if customFieldId is None:
             raise ValueError("Missing required parameter 'customFieldId'")
@@ -622,23 +765,29 @@ class WrikeApp(APIApplication):
         removeMirrors=None,
     ) -> Any:
         """
-        Updates a custom field specified by its ID with the provided parameters using an HTTP PUT request.
-
+        Updates a custom field specified by its ID with the provided parameters.
+        
         Args:
             customFieldId: The unique identifier of the custom field to update.
-            title: Optional new title for the custom field (default is None).
-            type: Optional new field type (default is None).
-            changeScope: Optional scope for tracking or permission changes (default is None).
-            spaceId: Optional identifier of the space associated with the custom field (default is None).
-            sharing: Optional sharing configuration or permissions (default is None).
-            addShareds: Optional list of users or entities to add to the shared list (default is None).
-            removeShareds: Optional list of users or entities to remove from the shared list (default is None).
-            settings: Optional dictionary with additional settings for the custom field (default is None).
-            addMirrors: Optional list of entities to add as mirrors (default is None).
-            removeMirrors: Optional list of entities to remove as mirrors (default is None).
-
+            title: Optional new title for the custom field.
+            type: Optional new field type.
+            changeScope: Optional scope for tracking or permission changes.
+            spaceId: Optional identifier of the space associated with the custom field.
+            sharing: Optional sharing configuration or permissions.
+            addShareds: Optional list of users or entities to add to the shared list.
+            removeShareds: Optional list of users or entities to remove from the shared list.
+            settings: Optional dictionary with additional settings for the custom field.
+            addMirrors: Optional list of entities to add as mirrors.
+            removeMirrors: Optional list of entities to remove as mirrors.
+        
         Returns:
             The server response as a JSON-decoded object containing the updated custom field data.
+        
+        Raises:
+            ValueError: Raised when the required 'customFieldId' parameter is missing.
+        
+        Tags:
+            update, custom-field, http-put, management, important
         """
         if customFieldId is None:
             raise ValueError("Missing required parameter 'customFieldId'")
@@ -666,12 +815,18 @@ class WrikeApp(APIApplication):
     def delete_customfields_by_customfieldid(self, customFieldId) -> Any:
         """
         Deletes a custom field resource identified by its custom field ID.
-
+        
         Args:
             customFieldId: The unique identifier of the custom field to delete.
-
+        
         Returns:
             The server response as a deserialized JSON object, typically containing the result of the delete operation.
+        
+        Raises:
+            ValueError: Raised when the 'customFieldId' parameter is missing.
+        
+        Tags:
+            delete, custom-field, management, important
         """
         if customFieldId is None:
             raise ValueError("Missing required parameter 'customFieldId'")
@@ -699,26 +854,32 @@ class WrikeApp(APIApplication):
         fields=None,
     ) -> Any:
         """
-        Retrieves a list of folders from the API, supporting extensive filtering, pagination, and field selection.
-
+        Retrieves a list of folders from the API with support for filtering, pagination, and field selection.
+        
         Args:
-            permalink: str or None. Filter results by folder permalink.
-            descendants: bool or None. If True, include descendant folders in the results.
-            metadata: dict or None. Filter folders by matching metadata fields.
-            customFields: dict or None. Filter results by custom field values.
-            updatedDate: str or None. Only return folders updated on or after this date (ISO 8601 format).
-            withInvitations: bool or None. If True, include folders with active invitations.
-            project: str or None. Filter folders by associated project identifier.
-            deleted: bool or None. If True, include deleted folders in the response.
-            contractTypes: list or None. Filter folders by contract types.
-            plainTextCustomFields: dict or None. Filter by plain text custom fields.
-            customItemTypes: list or None. Filter folders by custom item types.
-            pageSize: int or None. Maximum number of results to return per page.
-            nextPageToken: str or None. Token to retrieve the next page of results.
-            fields: list or None. Specify which fields to include in the response.
-
+            permalink: Filter results by folder permalink.
+            descendants: Include descendant folders if True.
+            metadata: Filter folders by matching metadata fields.
+            customFields: Filter results by custom field values.
+            updatedDate: Only return folders updated on or after this date (ISO 8601 format).
+            withInvitations: If True, include folders with active invitations.
+            project: Filter folders by associated project identifier.
+            deleted: Include deleted folders in the response if True.
+            contractTypes: Filter folders by contract types.
+            plainTextCustomFields: Filter by plain text custom fields.
+            customItemTypes: Filter folders by custom item types.
+            pageSize: Maximum number of results to return per page.
+            nextPageToken: Token to retrieve the next page of results.
+            fields: Specify which fields to include in the response.
+        
         Returns:
-            dict. The JSON-decoded response from the API containing folder data and related metadata.
+            A JSON-decoded response from the API containing folder data and related metadata.
+        
+        Raises:
+            requests.HTTPError: Raised if an HTTP error occurs during the API request.
+        
+        Tags:
+            retrieve, list, filter, pagination, api-call, folders, metadata, important
         """
         url = f"{self.base_url}/folders"
         query_params = {
@@ -764,25 +925,31 @@ class WrikeApp(APIApplication):
     ) -> Any:
         """
         Retrieves subfolders of a specified folder, applying optional filters and pagination parameters.
-
+        
         Args:
-            folderId: str. The unique identifier of the parent folder whose subfolders are to be retrieved. Required.
-            permalink: str, optional. Filter results to subfolders with the specified permalink.
-            descendants: bool, optional. If True, include descendant folders recursively in the results.
-            metadata: str or dict, optional. Filter subfolders by associated metadata.
-            customFields: str, list, or dict, optional. Filter subfolders by custom field values.
-            updatedDate: str or datetime, optional. Filter subfolders updated on or after the specified date.
-            withInvitations: bool, optional. If True, include invitation information with subfolders.
-            project: str or int, optional. Filter subfolders belonging to a specific project.
-            contractTypes: str, list, or dict, optional. Filter subfolders by contract types.
-            plainTextCustomFields: str, list, or dict, optional. Filter subfolders by plain text custom fields.
-            customItemTypes: str, list, or dict, optional. Filter subfolders by custom item types.
-            pageSize: int, optional. Maximum number of subfolders to return per request, for pagination.
-            nextPageToken: str, optional. Token for retrieving the next page of results.
-            fields: str or list, optional. Specify fields to include in the response for each folder.
-
+            folderId: The unique identifier of the parent folder whose subfolders are to be retrieved. Required.
+            permalink: Filter results to subfolders with the specified permalink.
+            descendants: If True, include descendant folders recursively in the results.
+            metadata: Filter subfolders by associated metadata.
+            customFields: Filter subfolders by custom field values.
+            updatedDate: Filter subfolders updated on or after the specified date.
+            withInvitations: If True, include invitation information with subfolders.
+            project: Filter subfolders belonging to a specific project.
+            contractTypes: Filter subfolders by contract types.
+            plainTextCustomFields: Filter subfolders by plain text custom fields.
+            customItemTypes: Filter subfolders by custom item types.
+            pageSize: Maximum number of subfolders to return per request, for pagination.
+            nextPageToken: Token for retrieving the next page of results.
+            fields: Specify fields to include in the response for each folder.
+        
         Returns:
-            dict. A JSON object containing the list of subfolders matching the criteria, along with pagination tokens and any requested metadata.
+            A JSON object containing the list of subfolders matching the criteria, along with pagination tokens and any requested metadata.
+        
+        Raises:
+            ValueError: Raised if the required 'folderId' parameter is missing.
+        
+        Tags:
+            folder-management, list, filter, pagination, important
         """
         if folderId is None:
             raise ValueError("Missing required parameter 'folderId'")
@@ -828,24 +995,30 @@ class WrikeApp(APIApplication):
     ) -> Any:
         """
         Creates a new subfolder within a specified folder by folder ID, with configurable attributes such as title, description, sharing, metadata, and permissions.
-
+        
         Args:
-            folderId: str. The ID of the parent folder in which to create the new subfolder. Required.
-            title: str. The title of the new subfolder. Required.
-            description: str, optional. An optional description for the subfolder.
-            shareds: list or None. Optional list of user or group IDs to share the subfolder with.
-            metadata: dict or None. Optional metadata to associate with the subfolder.
-            customFields: dict or None. Optional custom fields to set for the subfolder.
-            customColumns: dict or None. Optional custom columns configuration.
-            project: str or None. Optional project identifier to associate with the subfolder.
-            userAccessRoles: list or None. Optional list of user access roles to assign to the subfolder.
-            withInvitations: bool or None. If True, send invitations to shared users or groups. Optional.
-            customItemTypeId: str or None. Optional custom item type identifier for the subfolder.
-            plainTextCustomFields: dict or None. Optional plain text custom fields to set for the subfolder.
-            fields: list or None. Optional list of specific fields to include in the response.
-
+            folderId: The ID of the parent folder in which to create the new subfolder. Required.
+            title: The title of the new subfolder. Required.
+            description: An optional description for the subfolder.
+            shareds: Optional list of user or group IDs to share the subfolder with.
+            metadata: Optional metadata to associate with the subfolder.
+            customFields: Optional custom fields to set for the subfolder.
+            customColumns: Optional custom columns configuration.
+            project: Optional project identifier to associate with the subfolder.
+            userAccessRoles: Optional list of user access roles to assign to the subfolder.
+            withInvitations: If True, send invitations to shared users or groups. Optional.
+            customItemTypeId: Optional custom item type identifier for the subfolder.
+            plainTextCustomFields: Optional plain text custom fields to set for the subfolder.
+            fields: Optional list of specific fields to include in the response.
+        
         Returns:
-            dict. The newly created subfolder object as returned by the API.
+            The newly created subfolder object as returned by the API.
+        
+        Raises:
+            ValueError: Raised when either of the required parameters 'folderId' or 'title' is missing.
+        
+        Tags:
+            create, subfolder, important, folder, management
         """
         if folderId is None:
             raise ValueError("Missing required parameter 'folderId'")
@@ -875,12 +1048,19 @@ class WrikeApp(APIApplication):
     def delete_folders_by_folderid(self, folderId) -> Any:
         """
         Deletes a folder resource identified by its folder ID via an HTTP DELETE request.
-
+        
         Args:
             folderId: The unique identifier of the folder to delete. Must not be None.
-
+        
         Returns:
             The parsed JSON response from the server if the deletion is successful.
+        
+        Raises:
+            ValueError: Raised when the folder ID is missing (i.e., None).
+            HTTPError: Raised if the HTTP request fails.
+        
+        Tags:
+            delete, folders, async_job, management, important
         """
         if folderId is None:
             raise ValueError("Missing required parameter 'folderId'")
@@ -913,18 +1093,18 @@ class WrikeApp(APIApplication):
         fields=None,
     ) -> Any:
         """
-        Updates a folder's properties and relationships by folder ID using a PUT request.
-
+        Updates a folder's properties and relationships using a PUT request, allowing comprehensive modifications including metadata, access roles, and parent associations.
+        
         Args:
-            folderId: str. The unique identifier of the folder to update. Required.
-            title: str, optional. The new title for the folder.
-            description: str, optional. The updated description of the folder.
-            addParents: list or str, optional. Parent folder IDs to add as parents to this folder.
+            folderId: str. The unique identifier of the folder to update (required).
+            title: str, optional. New title for the folder.
+            description: str, optional. Updated description of the folder.
+            addParents: list or str, optional. Parent folder IDs to add to this folder.
             removeParents: list or str, optional. Parent folder IDs to remove from this folder.
             addShareds: list or str, optional. Accounts to share this folder with.
             removeShareds: list or str, optional. Shared accounts to remove from this folder.
             metadata: dict, optional. Additional metadata to update for the folder.
-            restore: bool, optional. Whether to restore the folder if it was deleted.
+            restore: bool, optional. Whether to restore a deleted folder.
             customFields: dict, optional. Custom fields and their values to set or update.
             customColumns: dict, optional. Custom columns and their values to set or update.
             clearCustomColumns: list or str, optional. Custom column fields to clear.
@@ -935,9 +1115,16 @@ class WrikeApp(APIApplication):
             convertToCustomItemType: str, optional. Converts the folder to a specific custom item type.
             plainTextCustomFields: dict, optional. Plain text fields to update.
             fields: str or list, optional. Specific fields to include in the response.
-
+        
         Returns:
-            dict. The JSON response containing updated folder information from the API.
+            dict. JSON response containing updated folder information from the API.
+        
+        Raises:
+            ValueError: Raised when 'folderId' is not provided.
+            HTTPError: Raised for HTTP request failures (4XX/5XX status codes).
+        
+        Tags:
+            update, folder, put-request, async-job, management, metadata, access-control, important
         """
         if folderId is None:
             raise ValueError("Missing required parameter 'folderId'")
@@ -1003,11 +1190,11 @@ class WrikeApp(APIApplication):
     ) -> Any:
         """
         Retrieves tasks from the API with optional filtering, sorting, pagination, and field selection parameters.
-
+        
         Args:
             descendants: Optional; filter tasks by descendant items or folders.
             title: Optional; filter tasks by title.
-            status: Optional; filter tasks by their status (e.g., active, completed).
+            status: Optional; filter tasks by their status.
             importance: Optional; filter tasks by importance level.
             startDate: Optional; filter tasks by their start date.
             dueDate: Optional; filter tasks by due date.
@@ -1035,9 +1222,15 @@ class WrikeApp(APIApplication):
             plainTextCustomFields: Optional; specify if custom fields should be plain text.
             customItemTypes: Optional; filter by custom item types.
             fields: Optional; select specific fields to include in the result.
-
+        
         Returns:
             The JSON-decoded API response containing a list of tasks and related metadata.
+        
+        Raises:
+            requests.exceptions.HTTPError: Raised when the API request returns an unsuccessful status code.
+        
+        Tags:
+            list, filter, api_call, async_job_support, management, important
         """
         url = f"{self.base_url}/tasks"
         query_params = {
@@ -1083,13 +1276,19 @@ class WrikeApp(APIApplication):
     def get_tasks_by_taskid(self, taskId, fields=None) -> Any:
         """
         Retrieves a task by its ID from the remote service, optionally returning only specified fields.
-
+        
         Args:
             taskId: The unique identifier of the task to retrieve.
             fields: Optional. A comma-separated string specifying which fields to include in the response. If None, all available fields are returned.
-
+        
         Returns:
             The JSON-decoded response data containing task details, as returned by the remote API.
+        
+        Raises:
+            ValueError: Raised when the required 'taskId' parameter is missing.
+        
+        Tags:
+            task, retrieve, api, management, important
         """
         if taskId is None:
             raise ValueError("Missing required parameter 'taskId'")
@@ -1133,42 +1332,49 @@ class WrikeApp(APIApplication):
         fields=None,
     ) -> Any:
         """
-        Updates the properties and relationships of a task specified by its ID, applying the given changes and returning the updated task data as a JSON object.
-
+        Updates a task's properties and relationships by ID, returning the updated task data.
+        
         Args:
-            taskId: str. The unique identifier of the task to update. Must not be None.
-            title: Optional[str]. The new title for the task.
-            description: Optional[str]. The new description for the task.
-            status: Optional[str]. The new status for the task.
-            importance: Optional[str]. The importance level to assign to the task.
-            dates: Optional[dict]. Task dates to update (e.g., due date, start date).
-            addParents: Optional[list]. List of parent task IDs to add as parents to this task.
-            removeParents: Optional[list]. List of parent task IDs to remove from this task.
-            addShareds: Optional[list]. List of user IDs to add as shared users for this task.
-            removeShareds: Optional[list]. List of user IDs to remove from shared users.
-            addResponsibles: Optional[list]. List of user IDs to add as responsible for this task.
-            removeResponsibles: Optional[list]. List of user IDs to remove from responsibles.
-            addResponsiblePlaceholders: Optional[list]. Placeholder IDs to add to the responsible list.
-            removeResponsiblePlaceholders: Optional[list]. Placeholder IDs to remove from responsibles.
-            addFollowers: Optional[list]. User IDs to add as followers of this task.
-            follow: Optional[bool]. If set, follows or unfollows the task.
-            priorityBefore: Optional[str]. Task ID before which this task should be prioritized.
-            priorityAfter: Optional[str]. Task ID after which this task should be prioritized.
-            addSuperTasks: Optional[list]. Task IDs to add as super tasks.
-            removeSuperTasks: Optional[list]. Task IDs to remove from super tasks.
-            metadata: Optional[dict]. Arbitrary metadata to associate with the task.
-            customFields: Optional[list]. List of custom field updates for the task.
-            customStatus: Optional[str]. Custom status identifier to apply.
-            restore: Optional[bool]. If True, restores a deleted task.
-            effortAllocation: Optional[list]. List of effort allocation data objects.
-            billingType: Optional[str]. Billing type identifier to set for the task.
-            withInvitations: Optional[bool]. If True, send invitations to new shared/responsible users.
-            convertToCustomItemType: Optional[str]. Identifier to convert the task to a custom item type.
-            plainTextCustomFields: Optional[dict]. Plain text values for custom fields.
-            fields: Optional[list]. List of fields to include in the response.
-
+            taskId: The unique identifier of the task to update (required).
+            title: The new title for the task.
+            description: The new description for the task.
+            status: The new status identifier for the task.
+            importance: The importance level identifier to assign.
+            dates: Dictionary containing task date updates (e.g., due date, start date).
+            addParents: List of parent task IDs to add to this task.
+            removeParents: List of parent task IDs to remove from this task.
+            addShareds: List of user IDs to add as shared users.
+            removeShareds: List of user IDs to remove from shared users.
+            addResponsibles: List of user IDs to add as responsible users.
+            removeResponsibles: List of user IDs to remove from responsible users.
+            addResponsiblePlaceholders: Placeholder IDs to add to responsible users.
+            removeResponsiblePlaceholders: Placeholder IDs to remove from responsible users.
+            addFollowers: User IDs to add as followers.
+            follow: If True/False, follows or unfollows the task.
+            priorityBefore: Task ID before which to prioritize this task.
+            priorityAfter: Task ID after which to prioritize this task.
+            addSuperTasks: Task IDs to add as super tasks.
+            removeSuperTasks: Task IDs to remove from super tasks.
+            metadata: Arbitrary metadata key-value pairs to associate.
+            customFields: List of custom field update objects.
+            customStatus: Custom status identifier to apply.
+            restore: If True, restores a deleted task.
+            effortAllocation: Effort allocation data objects.
+            billingType: Billing type identifier to set.
+            withInvitations: If True, sends invitations to new shared/responsible users.
+            convertToCustomItemType: Identifier to convert task to custom item type.
+            plainTextCustomFields: Plain text values for custom fields.
+            fields: List of fields to include in the response.
+        
         Returns:
-            dict. The JSON response containing updated task details as returned by the server.
+            Dictionary containing updated task details from the server response.
+        
+        Raises:
+            ValueError: When taskId parameter is not provided.
+            HTTPError: When the API request fails (e.g., invalid parameters or server errors).
+        
+        Tags:
+            update, task-management, async, api, rest, batch, important
         """
         if taskId is None:
             raise ValueError("Missing required parameter 'taskId'")
@@ -1213,12 +1419,19 @@ class WrikeApp(APIApplication):
     def delete_tasks_by_taskid(self, taskId) -> Any:
         """
         Deletes a task identified by the given task ID via an HTTP DELETE request and returns the response as a JSON object.
-
+        
         Args:
             taskId: The unique identifier of the task to be deleted. Must not be None.
-
+        
         Returns:
             A JSON object containing the API response to the delete operation.
+        
+        Raises:
+            ValueError: Raised when the required parameter 'taskId' is None.
+            HTTPError: Raised if the HTTP DELETE request fails (e.g., invalid task ID or server error).
+        
+        Tags:
+            delete, http, async_job, management, important
         """
         if taskId is None:
             raise ValueError("Missing required parameter 'taskId'")
@@ -1256,36 +1469,43 @@ class WrikeApp(APIApplication):
         fields=None,
     ) -> Any:
         """
-        Creates a new task within a specified folder by folder ID, with configurable attributes such as title, description, status, importance, dates, assigned users, metadata, custom fields, and other options.
-
+        Creates a new task in a specified folder with configurable attributes including title, description, assignments, and custom fields.
+        
         Args:
-            folderId: str or int. The unique identifier of the folder in which to create the new task. Required.
-            title: str. The title of the task to be created. Required.
-            description: str, optional. A detailed description of the task.
-            status: str, optional. The status of the task (e.g., active, completed).
-            importance: str or int, optional. The importance level of the task.
-            dates: dict or list, optional. Date-related information for the task, such as start and due dates.
-            shareds: list, optional. Users or user IDs to share the task with.
-            parents: list, optional. Parent task IDs or references, if this task is a subtask.
-            responsibles: list, optional. Users or user IDs responsible for this task.
+            folderId: str or int. Required ID of the folder where the task is created.
+            title: str. Required title of the task.
+            description: str, optional. Detailed task description.
+            status: str, optional. Task status (e.g., 'active', 'completed').
+            importance: str or int, optional. Importance level of the task.
+            dates: dict or list, optional. Date-related details (e.g., start/due dates).
+            shareds: list, optional. Users to share the task with.
+            parents: list, optional. Parent task IDs if this is a subtask.
+            responsibles: list, optional. Users responsible for the task.
             responsiblePlaceholders: list, optional. Placeholder users assigned as responsible.
-            followers: list, optional. Users or user IDs who will follow task updates.
+            followers: list, optional. Users to follow task updates.
             follow: bool, optional. Whether the current user should follow the task.
-            priorityBefore: str or int, optional. Task ID before which this task should be prioritized.
-            priorityAfter: str or int, optional. Task ID after which this task should be prioritized.
+            priorityBefore: str or int, optional. ID of task to prioritize before.
+            priorityAfter: str or int, optional. ID of task to prioritize after.
             superTasks: list, optional. IDs of super tasks this task belongs to.
-            metadata: dict, optional. Arbitrary metadata to attach to the task.
-            customFields: dict or list, optional. Custom field values for the task.
-            customStatus: str, optional. Custom status value for the task.
-            effortAllocation: dict or list, optional. Effort allocation details (e.g., estimated time, allocation per responsible).
-            billingType: str, optional. Billing details or billing type for the task.
-            withInvitations: bool, optional. Whether to send invitations to newly added users.
+            metadata: dict, optional. Arbitrary metadata attached to the task.
+            customFields: dict or list, optional. Custom field values.
+            customStatus: str, optional. Custom status value.
+            effortAllocation: dict or list, optional. Effort allocation details.
+            billingType: str, optional. Billing details/type.
+            withInvitations: bool, optional. Send invitations to added users.
             customItemTypeId: str or int, optional. Custom item type identifier.
-            plainTextCustomFields: dict or list, optional. Custom fields in plain text format.
-            fields: list or str, optional. Specifies which fields should be included in the API response.
-
+            plainTextCustomFields: dict or list, optional. Plain text custom fields.
+            fields: list or str, optional. Fields to include in the API response.
+        
         Returns:
-            dict. The JSON response from the server containing details of the newly created task.
+            dict. JSON response containing details of the created task.
+        
+        Raises:
+            ValueError: If 'folderId' or 'title' parameters are missing.
+            HTTPError: If the API request fails (via response.raise_for_status()).
+        
+        Tags:
+            create, task-management, async-job, api-integration, important
         """
         if folderId is None:
             raise ValueError("Missing required parameter 'folderId'")
