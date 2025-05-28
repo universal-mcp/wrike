@@ -1,10 +1,10 @@
-# Wrike MCP Server
+# WrikeApp MCP Server
 
-An MCP Server for the Wrike API.
+An MCP Server for the WrikeApp API.
 
 ## 🛠️ Tool List
 
-This is automatically generated from OpenAPI schema for the Wrike API.
+This is automatically generated from OpenAPI schema for the WrikeApp API.
 
 
 | Tool | Description |
