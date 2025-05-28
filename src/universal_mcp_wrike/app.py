@@ -66,7 +66,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised when the 'contactId' parameter is missing.
         
         Tags:
-            retrieve, contact-management, important
+            retrieve, contact-management
         """
         if contactId is None:
             raise ValueError("Missing required parameter 'contactId'")
@@ -106,7 +106,7 @@ class WrikeApp(APIApplication):
             requests.HTTPError: When the API request fails due to client (4xx) or server (5xx) errors.
         
         Tags:
-            update, contact, async-job, management, important
+            update, contact, async-job, management
         """
         if contactId is None:
             raise ValueError("Missing required parameter 'contactId'")
@@ -140,7 +140,7 @@ class WrikeApp(APIApplication):
             HTTPError: Raised when the API request fails (non-2xx status code).
         
         Tags:
-            retrieve, user-info, api, management, important
+            retrieve, user-info, api, management
         """
         if userId is None:
             raise ValueError("Missing required parameter 'userId'")
@@ -166,7 +166,7 @@ class WrikeApp(APIApplication):
             HTTPError: Raised if the HTTP request to the server fails.
         
         Tags:
-            update, user-management, important
+            update, user-management
         """
         if userId is None:
             raise ValueError("Missing required parameter 'userId'")
@@ -236,7 +236,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised when the required 'title' parameter is missing.
         
         Tags:
-            create, group-management, important
+            create, group-management
         """
         if title is None:
             raise ValueError("Missing required parameter 'title'")
@@ -269,7 +269,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised if the groupId parameter is missing.
         
         Tags:
-            retrieve, group-management, data-fetch, important
+            retrieve, group-management, data-fetch
         """
         if groupId is None:
             raise ValueError("Missing required parameter 'groupId'")
@@ -312,7 +312,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised if the required 'groupId' parameter is missing.
         
         Tags:
-            update, group-management, membership, important
+            update, group-management, membership
         """
         if groupId is None:
             raise ValueError("Missing required parameter 'groupId'")
@@ -347,7 +347,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised if the groupId is None.
         
         Tags:
-            delete, group-management, api-call, important
+            delete, group-management, api-call
         """
         if groupId is None:
             raise ValueError("Missing required parameter 'groupId'")
@@ -371,7 +371,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised when the required 'members' parameter is missing or None.
         
         Tags:
-            bulk, update, management, important
+            bulk, update, management
         """
         if members is None:
             raise ValueError("Missing required parameter 'members'")
@@ -401,7 +401,7 @@ class WrikeApp(APIApplication):
             requests.HTTPError: Raised if the HTTP request fails (non-2xx status code).
         
         Tags:
-            retrieve, list, invitations, async_job, important
+            retrieve, list, invitations, async_job
         """
         url = f"{self.base_url}/invitations"
         query_params = {}
@@ -440,7 +440,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised if the required 'email' parameter is missing.
         
         Tags:
-            invite, email, invitation, user-management, important
+            invite, email, invitation, user-management
         """
         if email is None:
             raise ValueError("Missing required parameter 'email'")
@@ -482,7 +482,7 @@ class WrikeApp(APIApplication):
             HTTPError: When the API request fails (raised via response.raise_for_status()).
         
         Tags:
-            update, invitation, api, async-job, management, important
+            update, invitation, api, async-job, management
         """
         if invitationId is None:
             raise ValueError("Missing required parameter 'invitationId'")
@@ -514,7 +514,7 @@ class WrikeApp(APIApplication):
             requests.exceptions.HTTPError: Raised for HTTP request failures (e.g., invalid invitation ID or network issues)
         
         Tags:
-            delete, invitation, api, management, important
+            delete, invitation, api, management
         """
         if invitationId is None:
             raise ValueError("Missing required parameter 'invitationId'")
@@ -538,7 +538,7 @@ class WrikeApp(APIApplication):
             requests.exceptions.HTTPError: Raised when the HTTP request returns an unsuccessful status code.
         
         Tags:
-            retrieve, account, api, important
+            retrieve, account, api
         """
         url = f"{self.base_url}/account"
         query_params = {k: v for k, v in [("fields", fields)] if v is not None}
@@ -560,7 +560,7 @@ class WrikeApp(APIApplication):
             HTTPError: Raised if the HTTP request fails (e.g., due to invalid metadata format, network issues, or server errors).
         
         Tags:
-            put, account, metadata, async_job, important
+            put, account, metadata, async_job
         """
         request_body = {
             "metadata": metadata,
@@ -611,7 +611,7 @@ class WrikeApp(APIApplication):
             HTTPError: Raised when the server returns a 4XX/5XX status code, indicating a failed request.
         
         Tags:
-            post, create, workflow, async_job, management, important
+            post, create, workflow, async_job, management
         """
         url = f"{self.base_url}/workflows"
         query_params = {k: v for k, v in [("name", name)] if v is not None}
@@ -638,7 +638,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised when the 'workflowId' parameter is missing.
         
         Tags:
-            update, workflow, management, important
+            update, workflow, management
         """
         if workflowId is None:
             raise ValueError("Missing required parameter 'workflowId'")
@@ -666,7 +666,7 @@ class WrikeApp(APIApplication):
             requests.exceptions.HTTPError: Raised if the HTTP request returned an unsuccessful status code.
         
         Tags:
-            fetch, api_call, data_retrieval, important
+            fetch, api_call, data_retrieval
         """
         url = f"{self.base_url}/customfields"
         query_params = {}
@@ -703,7 +703,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised when either 'title' or 'type' is missing.
         
         Tags:
-            create, custom-field, management, api-request, important
+            create, custom-field, management, api-request
         """
         if title is None:
             raise ValueError("Missing required parameter 'title'")
@@ -740,7 +740,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised when the 'customFieldId' parameter is missing or None
         
         Tags:
-            retrieve, api, custom-field, important
+            retrieve, api, custom-field
         """
         if customFieldId is None:
             raise ValueError("Missing required parameter 'customFieldId'")
@@ -787,7 +787,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised when the required 'customFieldId' parameter is missing.
         
         Tags:
-            update, custom-field, http-put, management, important
+            update, custom-field, http-put, management
         """
         if customFieldId is None:
             raise ValueError("Missing required parameter 'customFieldId'")
@@ -826,7 +826,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised when the 'customFieldId' parameter is missing.
         
         Tags:
-            delete, custom-field, management, important
+            delete, custom-field, management
         """
         if customFieldId is None:
             raise ValueError("Missing required parameter 'customFieldId'")
@@ -879,7 +879,7 @@ class WrikeApp(APIApplication):
             requests.HTTPError: Raised if an HTTP error occurs during the API request.
         
         Tags:
-            retrieve, list, filter, pagination, api-call, folders, metadata, important
+            retrieve, list, filter, pagination, api-call, folders, metadata
         """
         url = f"{self.base_url}/folders"
         query_params = {
@@ -949,7 +949,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised if the required 'folderId' parameter is missing.
         
         Tags:
-            folder-management, list, filter, pagination, important
+            folder-management, list, filter, pagination
         """
         if folderId is None:
             raise ValueError("Missing required parameter 'folderId'")
@@ -1018,7 +1018,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised when either of the required parameters 'folderId' or 'title' is missing.
         
         Tags:
-            create, subfolder, important, folder, management
+            create, subfolder, folder, management
         """
         if folderId is None:
             raise ValueError("Missing required parameter 'folderId'")
@@ -1060,7 +1060,7 @@ class WrikeApp(APIApplication):
             HTTPError: Raised if the HTTP request fails.
         
         Tags:
-            delete, folders, async_job, management, important
+            delete, folders, async_job, management
         """
         if folderId is None:
             raise ValueError("Missing required parameter 'folderId'")
@@ -1124,7 +1124,7 @@ class WrikeApp(APIApplication):
             HTTPError: Raised for HTTP request failures (4XX/5XX status codes).
         
         Tags:
-            update, folder, put-request, async-job, management, metadata, access-control, important
+            update, folder, put-request, async-job, management, metadata, access-control
         """
         if folderId is None:
             raise ValueError("Missing required parameter 'folderId'")
@@ -1230,7 +1230,7 @@ class WrikeApp(APIApplication):
             requests.exceptions.HTTPError: Raised when the API request returns an unsuccessful status code.
         
         Tags:
-            list, filter, api_call, async_job_support, management, important
+            list, filter, api_call, async_job_support, management
         """
         url = f"{self.base_url}/tasks"
         query_params = {
@@ -1288,7 +1288,7 @@ class WrikeApp(APIApplication):
             ValueError: Raised when the required 'taskId' parameter is missing.
         
         Tags:
-            task, retrieve, api, management, important
+            task, retrieve, api, management
         """
         if taskId is None:
             raise ValueError("Missing required parameter 'taskId'")
@@ -1374,7 +1374,7 @@ class WrikeApp(APIApplication):
             HTTPError: When the API request fails (e.g., invalid parameters or server errors).
         
         Tags:
-            update, task-management, async, api, rest, batch, important
+            update, task-management, async, api, rest, batch
         """
         if taskId is None:
             raise ValueError("Missing required parameter 'taskId'")
@@ -1431,7 +1431,7 @@ class WrikeApp(APIApplication):
             HTTPError: Raised if the HTTP DELETE request fails (e.g., invalid task ID or server error).
         
         Tags:
-            delete, http, async_job, management, important
+            delete, http, async_job, management
         """
         if taskId is None:
             raise ValueError("Missing required parameter 'taskId'")
@@ -1505,7 +1505,7 @@ class WrikeApp(APIApplication):
             HTTPError: If the API request fails (via response.raise_for_status()).
         
         Tags:
-            create, task-management, async-job, api-integration, important
+            create, task-management, async-job, api-integration
         """
         if folderId is None:
             raise ValueError("Missing required parameter 'folderId'")
@@ -1544,15 +1544,6 @@ class WrikeApp(APIApplication):
         return response.json()
 
     def list_tools(self):
-        """
-        Returns a list of references to tool-related instance methods for managing contacts, users, groups, invitations, accounts, workflows, custom fields, folders, and tasks.
-
-        Args:
-            None: This method does not take any arguments.
-
-        Returns:
-            list: A list of method references corresponding to various instance-level API operations for managing organizational entities such as contacts, users, groups, invitations, accounts, workflows, custom fields, folders, and tasks.
-        """
         return [
             self.get_contacts,
             self.get_contacts_by_contactid,
